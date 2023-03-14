@@ -24,14 +24,17 @@ type PortOutMsg =
   StoreUserInLocal User -- type alias User = { id: String, name: String}
   GetUserFromLocal String
 
--- note how all the PortInMsg types are just wrappers around String. That's required because you are going to JSON.stringify all data coming from outside Elm.
+-- note how all the PortInMsg types are just wrappers around String.
+-- That's required because all the incoming data is convered into a
+-- JSON string which you can then decode using decoders built for
+-- each PortInMsg type.
 type PortInMsg =
   ReceiveFileContents String
   ReceiveUserFromLocal String
   Unknown String
 ```
 
-**2. Define how you want to handle the data going out.**
+**2. Define how you want to handle the data going out (sendHandler) and coming in (receiveHandler).**
 
 ```elm
 sendHandler : PortOutMsg -> Encode.Value
@@ -44,6 +47,26 @@ sendHandler msg =
       ("name", Encode.string usr.name)
     ]
     GetUserFromLocal str -> Encode.string str
+
+receiveHandler : ( String, Encode.Value ) -> PortInMsg
+receiveHandler ( key, val ) =
+    let
+        jsonString =
+            Encode.encode 0 val
+    in
+    case key of
+        "ReceiveString" ->
+            ReceiveString jsonString
+
+        "ReceiveBool" ->
+            ReceiveBool jsonString
+
+        "ReceiveUser" ->
+            ReceiveUser jsonString
+
+        _ ->
+            Unknown
+
 ```
 
 **3. Run the generator** (TODO)

@@ -43,7 +43,7 @@ update msg model =
             in
             ( model, Cmd.none )
 
-        _ ->
+        NoOp ->
             ( model, Cmd.none )
 
 

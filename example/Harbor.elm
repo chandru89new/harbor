@@ -30,3 +30,23 @@ sendHandler msg =
 
         Get str ->
             Encode.string str
+
+
+receiveHandler : ( String, Encode.Value ) -> PortInMsg
+receiveHandler ( key, val ) =
+    let
+        jsonString =
+            Encode.encode 0 val
+    in
+    case key of
+        "ReceiveString" ->
+            ReceiveString jsonString
+
+        "ReceiveBool" ->
+            ReceiveBool jsonString
+
+        "ReceiveUser" ->
+            ReceiveUser jsonString
+
+        _ ->
+            Unknown
