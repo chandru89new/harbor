@@ -1,5 +1,5 @@
 const { Elm } = require('./main.js');
-const { MsgFromElm, MsgToElm } = require('./src/HarborGenerated.js');
+const { MsgFromElm, MsgToElm } = require('./example/HarborGenerated.js');
 
 const app = Elm.Main.init({
   flags: null,
