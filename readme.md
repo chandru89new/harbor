@@ -4,7 +4,7 @@ Unified (mostly) type-safe interface for Elm Ports.
 
 ## Why does this exist?
 
-[Elm Ports]() are not that great when it comes to reusability, composibility and type-safety outside of Elm.
+[Elm Ports](https://guide.elm-lang.org/interop/ports.html) are not that great when it comes to reusability, composibility and type-safety outside of Elm.
 
 Most folks end up writing one new port for everytime they need to talk to a process outside Elm, or everytime a process needs to talk to Elm.
 
@@ -12,7 +12,7 @@ What if you could simply have one interface to talk and one to listen?
 
 ## How does this work?
 
-(Note: this is the future goal of this project. The automations/codegen are yet to come.)
+(Note: the codegen parts of this library are not yet ready.)
 
 **1. You define the types of incoming messages and outgoing messages in Harbor.elm.**
 
@@ -46,7 +46,7 @@ sendHandler msg =
     GetUserFromLocal str -> Encode.string str
 ```
 
-**3. Run the generator**
+**3. Run the generator** (TODO)
 
 This will generate two files:
 
