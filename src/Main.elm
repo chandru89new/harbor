@@ -1,8 +1,8 @@
 module Main exposing (..)
 
+import Harbor as H
+import HarborGenerated as H
 import Json.Encode as Encode
-import PortIn
-import PortOut
 
 
 main =
@@ -19,16 +19,16 @@ type alias Model =
 
 type Msg
     = NoOp
-    | PortMsg PortIn.PortInMsg
+    | PortMsg H.PortInMsg
 
 
 init : () -> ( Model, Cmd Msg )
 init _ =
     ( 1
     , Cmd.batch
-        [ PortOut.send <| PortOut.Log (Encode.string "log message as string")
-        , PortOut.send <| PortOut.Store (Encode.object [ ( "id", Encode.int 1 ) ])
-        , PortOut.send <| PortOut.Get (Encode.int 3)
+        [ H.send <| H.Log "log something to the console"
+        , H.send <| H.Store ( "data", Encode.object [ ( "id", Encode.int 1 ) ] )
+        , H.send <| H.Get "data"
         ]
     )
 
@@ -50,4 +50,4 @@ update msg model =
 subscriptions : Model -> Sub Msg
 subscriptions _ =
     Sub.batch
-        [ PortIn.toElm PortIn.toElmHandler |> Sub.map PortMsg ]
+        [ H.harborSubscription |> Sub.map PortMsg ]
