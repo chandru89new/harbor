@@ -24,19 +24,18 @@ type PortOutMsg =
   StoreUserInLocal User -- type alias User = { id: String, name: String}
   GetUserFromLocal String
 
--- note how all the PortInMsg types are just wrappers around String.
--- That's required because all the incoming data is convered into a
--- JSON string which you can then decode using decoders built for
--- each PortInMsg type.
-type PortInMsg =
-  ReceiveFileContents String
-  ReceiveUserFromLocal String
-  Unknown String
+type PortInMsg
+    = ReceiveString String
+    | ReceiveBool Bool
+    | ReceiveUser (Maybe User)
+    | Unknown
+
 ```
 
 **2. Define how you want to handle the data going out (sendHandler) and coming in (receiveHandler).**
 
 ```elm
+-- you have to convert all the data going out into a JSON value using encoders.
 sendHandler : PortOutMsg -> Encode.Value
 sendHandler msg =
   case msg of
@@ -48,6 +47,9 @@ sendHandler msg =
     ]
     GetUserFromLocal str -> Encode.string str
 
+
+-- you have to supply decoders to convert incoming values
+-- into values that the types of PortInMsg understand
 receiveHandler : ( String, Encode.Value ) -> PortInMsg
 receiveHandler ( key, val ) =
     let
@@ -56,20 +58,35 @@ receiveHandler ( key, val ) =
     in
     case key of
         "ReceiveString" ->
-            ReceiveString jsonString
+            ReceiveString <|
+                Decode.decodeString Decode.string jsonString
+                    |> Result.toMaybe
+                    |> Maybe.withDefault ""
 
         "ReceiveBool" ->
-            ReceiveBool jsonString
+            ReceiveBool <|
+                Decode.decodeString Decode.bool jsonString
+                    |> Result.toMaybe
+                    |> Maybe.withDefault False
 
         "ReceiveUser" ->
-            ReceiveUser jsonString
+            ReceiveUser <|
+                Decode.decodeString
+                    (Decode.map2 (\id name -> { id = id, name = name })
+                        (Decode.field "id" Decode.string)
+                        (Decode.field "name" Decode.string)
+                    )
+                    jsonString
+                    |> Result.toMaybe
 
         _ ->
             Unknown
 
 ```
 
-**3. Run the generator** (TODO)
+**3. Run the generator**
+
+(TODO)
 
 This will generate two files:
 
@@ -110,9 +127,10 @@ update msg model =
     -- all your existing stuff
     PortIn portInMsg ->
       case portInMsg of
-        H.ReceiveFileContents contentsString -> ... -- typically decode the value
-        H.ReceiveUserFromLocal userString -> ... -- Decode.decodeString userDecoder userString
-        H.Unknown str -> ...
+        H.ReceiveString str -> ... 
+        H.ReceiveBool bool -> ... -- Decode.decodeString userDecoder userString
+        H.ReceiveUser user -> ...
+        H.Unknown -> ...
 ```
 
 _To send messages to outside processes:_
@@ -137,7 +155,8 @@ const { Elm } = require('./src/elm-compiled.js');
 const app = Elm.Main.init({ flags: null });
 
 // to send
-app.ports.toElm.send([MsgToElm.ReceiveFileContents, JSON.stringify(fileData)]);
+app.ports.toElm.send([MsgToElm.ReceiveString, "something"]);
+app.ports.toElm.send([MsgToElm.ReceiveBool, true]);
 
 // to receive
 app.ports.fromElm.subscribe((msg, data) => {
@@ -148,8 +167,8 @@ app.ports.fromElm.subscribe((msg, data) => {
     case MsgFromElm.ReadFile:
       const contents = readFile(data);
       app.ports.toElm.send([
-        MsgToElm.ReceiveFileContents,
-        JSON.stringify(contents),
+        MsgToElm.ReceiveUser,
+        data,
       ]);
       break;
     // .. and so on

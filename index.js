@@ -7,14 +7,14 @@ const app = Elm.Main.init({
 
 app.ports.fromElm.subscribe(([msgType, data]) => {
   switch (msgType) {
-    case MsgFromElm.Log:
+    case MsgFromElm.LogToConsole:
       console.log("Asked to Log", data);
       break;
-    case MsgFromElm.Store:
+    case MsgFromElm.StoreUserInLocal:
       console.log("Asked to Store", data);
       app.ports.toElm.send([MsgToElm.ReceiveString, "done"]);
       break;
-    case MsgFromElm.Get:
+    case MsgFromElm.GetUserFromLocal:
       console.log("Asked to Get", data);
       app.ports.toElm.send([MsgToElm.ReceiveBool, true]);
       break;

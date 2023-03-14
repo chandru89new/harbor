@@ -16,14 +16,17 @@ send msg =
         portOutMsgToString : String
         portOutMsgToString =
             case msg of
-                H.Log _ ->
-                    "Log"
+                H.LogToConsole _ ->
+                    "LogToConsole"
 
-                H.Store _ ->
-                    "Store"
+                H.StoreUserInLocal _ ->
+                    "StoreUserInLocal"
 
-                H.Get _ ->
-                    "Get"
+                H.GetUserFromLocal ->
+                    "GetUserFromLocal"
+
+                H.ReadFile _ ->
+                    "ReadFile"
     in
     fromElm ( portOutMsgToString, H.sendHandler msg )
 
