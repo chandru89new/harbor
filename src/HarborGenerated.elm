@@ -7,15 +7,23 @@ import Json.Encode as Encode
 port fromElm : ( String, Encode.Value ) -> Cmd msg
 
 
-port receive : (( String, String ) -> msg) -> Sub msg
+port toElm : (( String, String ) -> msg) -> Sub msg
 
 
-receiveHandler =
-    H.receiveHandler
+receiveHandler : ( String, String ) -> H.PortInMsg
+receiveHandler ( key, jsonString ) =
+    case key of
+        "ReceiveString" ->
+            H.ReceiveString jsonString
 
+        "ReceiveBool" ->
+            H.ReceiveBool jsonString
 
-sendHandler =
-    H.sendHandler
+        "ReceiveUser" ->
+            H.ReceiveUser jsonString
+
+        _ ->
+            H.Unknown
 
 
 send : H.PortOutMsg -> Cmd msg
@@ -33,9 +41,9 @@ send msg =
                 H.Get _ ->
                     "Get"
     in
-    fromElm ( portOutMsgToString, sendHandler msg )
+    fromElm ( portOutMsgToString, H.sendHandler msg )
 
 
 harborSubscription : Sub H.PortInMsg
 harborSubscription =
-    receive receiveHandler
+    toElm receiveHandler

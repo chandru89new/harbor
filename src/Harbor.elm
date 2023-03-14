@@ -30,19 +30,3 @@ sendHandler msg =
 
         Get str ->
             Encode.string str
-
-
-receiveHandler : ( String, String ) -> PortInMsg
-receiveHandler ( key, jsonString ) =
-    case key of
-        "ReceiveString" ->
-            ReceiveString jsonString
-
-        "ReceiveBool" ->
-            ReceiveBool jsonString
-
-        "ReceiveUser" ->
-            ReceiveUser jsonString
-
-        _ ->
-            Unknown

@@ -1,24 +1,22 @@
-const { Elm } = require("./main.js");
-const { MsgTypeFromElm } = require("./src/PortTypes.js");
+const { Elm } = require('./main.js');
+const { MsgFromElm, MsgToElm } = require('./src/HarborGenerated.js');
 
 const app = Elm.Main.init({
   flags: null,
 });
 
-console.log(app.ports);
-
 app.ports.fromElm.subscribe(([msgType, data]) => {
   switch (msgType) {
-    case MsgTypeFromElm.Log:
-      console.log("Asked to Log", data);
+    case MsgFromElm.Log:
+      console.log('Asked to Log', data);
       break;
-    case MsgTypeFromElm.Store:
-      console.log("Asked to Store", data);
-      app.ports.toElm.send(["ReceiveString", JSON.stringify("done")]);
+    case MsgFromElm.Store:
+      console.log('Asked to Store', data);
+      app.ports.toElm.send([MsgToElm.ReceiveString, JSON.stringify('done')]);
       break;
-    case MsgTypeFromElm.Get:
-      console.log("Asked to Get", data);
-      app.ports.toElm.send(["ReceiveBool", JSON.stringify(true)]);
+    case MsgFromElm.Get:
+      console.log('Asked to Get', data);
+      app.ports.toElm.send([MsgToElm.ReceiveBool, JSON.stringify(true)]);
       break;
     default:
       break;
@@ -27,7 +25,7 @@ app.ports.fromElm.subscribe(([msgType, data]) => {
 
 setTimeout(() => {
   app.ports.toElm.send([
-    "ReceiveUser",
-    JSON.stringify({ id: "1", name: "John" }),
+    MsgToElm.ReceiveBool,
+    JSON.stringify({ id: '1', name: 'John' }),
   ]);
 }, 4000);
