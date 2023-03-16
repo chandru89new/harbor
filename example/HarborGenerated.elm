@@ -33,4 +33,4 @@ send msg =
 
 harborSubscription : Sub H.PortInMsg
 harborSubscription =
-    toElm H.receiveHandler
+    toElm (Tuple.mapSecond (Encode.encode 0) >> H.receiveHandler)

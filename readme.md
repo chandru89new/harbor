@@ -50,12 +50,8 @@ sendHandler msg =
 
 -- you have to supply decoders to convert incoming values
 -- into values that the types of PortInMsg understand
-receiveHandler : ( String, Encode.Value ) -> PortInMsg
-receiveHandler ( key, val ) =
-    let
-        jsonString =
-            Encode.encode 0 val
-    in
+receiveHandler : ( String, String ) -> PortInMsg
+receiveHandler ( key, jsonString ) =
     case key of
         "ReceiveString" ->
             ReceiveString <|
@@ -127,8 +123,8 @@ update msg model =
     -- all your existing stuff
     PortIn portInMsg ->
       case portInMsg of
-        H.ReceiveString str -> ... 
-        H.ReceiveBool bool -> ... -- Decode.decodeString userDecoder userString
+        H.ReceiveString str -> ...
+        H.ReceiveBool bool -> ...
         H.ReceiveUser user -> ...
         H.Unknown -> ...
 ```
@@ -155,7 +151,7 @@ const { Elm } = require('./src/elm-compiled.js');
 const app = Elm.Main.init({ flags: null });
 
 // to send
-app.ports.toElm.send([MsgToElm.ReceiveString, "something"]);
+app.ports.toElm.send([MsgToElm.ReceiveString, 'something']);
 app.ports.toElm.send([MsgToElm.ReceiveBool, true]);
 
 // to receive
@@ -166,10 +162,7 @@ app.ports.fromElm.subscribe((msg, data) => {
       break;
     case MsgFromElm.ReadFile:
       const contents = readFile(data);
-      app.ports.toElm.send([
-        MsgToElm.ReceiveUser,
-        data,
-      ]);
+      app.ports.toElm.send([MsgToElm.ReceiveUser, data]);
       break;
     // .. and so on
     default:

@@ -45,12 +45,8 @@ sendHandler msg =
             Encode.null
 
 
-receiveHandler : ( String, Encode.Value ) -> PortInMsg
-receiveHandler ( key, val ) =
-    let
-        jsonString =
-            Encode.encode 0 val
-    in
+receiveHandler : ( String, String ) -> PortInMsg
+receiveHandler ( key, jsonString ) =
     case key of
         "ReceiveString" ->
             ReceiveString <|
