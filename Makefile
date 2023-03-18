@@ -1,5 +1,5 @@
 build:
-	elm make example/Main.elm --output main.js --optimize
+	elm make src/Main.elm --output main.js --optimize
 
 dev-build:
-	elm make example/Main.elm --output main.js
+	elm make src/Main.elm --output main.js
