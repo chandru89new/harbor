@@ -1,7 +1,6 @@
 module Main exposing (..)
 
-import Harbor as H exposing (FileName(..), User)
-import HarborGenerated as H
+import Harbor as H
 
 
 main =
@@ -26,7 +25,7 @@ init _ =
     ( 1
     , Cmd.batch
         [ H.send <| H.LogToConsole "log something to the console"
-        , H.send <| H.StoreUserInLocal (User "1" "John")
+        , H.send <| H.StoreUserInLocal (H.User "1" "John")
         , H.send <| H.GetUserFromLocal
         ]
     )
