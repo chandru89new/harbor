@@ -18,7 +18,7 @@ So Harbor exists as a way for me to quickly get type-safe port messages in and o
 
 1. Copy the [`Harbor.elm`](./src/Harbor.elm) file into your project.
 2. Define your `PortInMsg` and `PortOutMsg` types. The file already has some good starting points to help you. It's no different from defining custom data types in Elm.
-3. Define the `sendHandler`, `receiveHandler` and `portOutMsgToString` functions. Again, follow the lead in the example. The first two are encoders and decoders mostly.
+3. Define the `portOutMsgEncoder`, `portInMsgDecoder` and `portOutMsgToString` functions. Again, follow the lead in the example. The first two are encoders and decoders mostly.
 4. Add a `PortMsg` type to your Main `Msg` as show in the [`Main.elm`](./src/Main.elm#L20) file and handle the incoming port msgs the way you want.
 5. Add `harborSubscription` to your Main `subscriptions` as shown in the [`Main.elm`](./src/Main.elm#L51) file.
 6. To send data out of a port, simply use `Harbor.send` as shown in the example in [`Main.elm`](./src/Main.elm#L27).

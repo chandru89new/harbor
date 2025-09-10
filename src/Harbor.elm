@@ -38,13 +38,13 @@ type alias User =
 {-| Describe how you want to encode the data going out of your ports
 when you send it.
 
-The signature for the `sendHandler` function is always:
+The signature for the `portOutMsgEncoder` function is always:
 
-    sendHandler : PortOutMsg -> Encode.Value
+    portOutMsgEncoder : PortOutMsg -> Encode.Value
 
 -}
-sendHandler : PortOutMsg -> Encode.Value
-sendHandler msg =
+portOutMsgEncoder : PortOutMsg -> Encode.Value
+portOutMsgEncoder msg =
     case msg of
         LogToConsole str ->
             Encode.string str
@@ -95,16 +95,16 @@ portOutMsgToString msg =
 
 
 {-| Describe how you wan to decode the data coming in via ports.
-The signature for the `receiveHandler` is always:
+The signature for the `portInMsgDecoder` is always:
 
-    receiveHandler : ( String, String ) -> PortInMsg
+    portInMsgDecoder : ( String, String ) -> PortInMsg
 
 That is, it receives a tuple where the first String is the exact literal string value
 of `PortInMsg`s and the second String is the JSON-stringified data that the port sent.
 
 -}
-receiveHandler : ( String, String ) -> PortInMsg
-receiveHandler ( key, jsonString ) =
+portInMsgDecoder : ( String, String ) -> PortInMsg
+portInMsgDecoder ( key, jsonString ) =
     case key of
         "ReceiveString" ->
             ReceiveString <|
@@ -147,9 +147,9 @@ port toElm : (( String, Encode.Value ) -> msg) -> Sub msg
 
 send : PortOutMsg -> Cmd msg
 send msg =
-    fromElm ( portOutMsgToString msg, sendHandler msg )
+    fromElm ( portOutMsgToString msg, portOutMsgEncoder msg )
 
 
 harborSubscription : Sub PortInMsg
 harborSubscription =
-    toElm (Tuple.mapSecond (Encode.encode 0) >> receiveHandler)
+    toElm (Tuple.mapSecond (Encode.encode 0) >> portInMsgDecoder)
